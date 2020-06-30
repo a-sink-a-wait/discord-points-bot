@@ -23,7 +23,8 @@ namespace Durable
             PointsTaken += amount;
             if (PointsTaken < 2000) return;
 
-            context.SignalEntity<War>(context.EntityKey, (war) => war.Start(SourceUser, TargetUser));
+            var newWar = context.GetState<War>();
+            newWar.Start(SourceUser, TargetUser);
         }
 
         public void Reset() => PointsTaken = 0;
@@ -60,6 +61,4 @@ namespace Durable
             return EnemyUsers;
         }
     }
-
-
 }

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Query\" />
+    <Folder Include="Function\Query\" />
   </ItemGroup>
 
 </Project>
