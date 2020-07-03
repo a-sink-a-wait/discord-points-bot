@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Newtonsoft.Json;
 
-namespace Durable
+namespace Durable.Entity
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class WarCounter
@@ -16,18 +16,13 @@ namespace Durable
         public string TargetUser { get; set; }
 
         [JsonProperty("pointsTaken")]
-        public int PointsTaken { get; set; }
+        public int TotalPointsTaken { get; set; }
 
-        public void Tick(int amount, IDurableEntityContext context)
-        {
-            PointsTaken += amount;
-            if (PointsTaken < 2000) return;
+        private const int WarThreshold = 2000;
 
-            var newWar = context.GetState<War>();
-            newWar.Start(SourceUser, TargetUser);
-        }
+        public void Tick(int amount) => TotalPointsTaken += amount;
 
-        public void Reset() => PointsTaken = 0;
+        public void Reset() => TotalPointsTaken = 0;
 
         [FunctionName(nameof(WarCounter))]
         public static Task Run([EntityTrigger] IDurableEntityContext context) =>
