@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Durable.Entity;
@@ -11,14 +12,25 @@ namespace Durable
     public class WarCounterEndpoint
     {
         [FunctionName("TickWarCounter")]
-        public async Task TickWarCounter([HttpTrigger(AuthorizationLevel.Anonymous, "post", "/tickwarcounter")] HttpRequestMessage request,
-            [DurableClient] IDurableEntityClient client)
+        public async Task TickWarCounter([DurableClient] IDurableEntityClient client,
+            [HttpTrigger(AuthorizationLevel.Function, "post", "/warcounter/tick")] HttpRequestMessage request)
         {
             var counterTick = await JsonSerializer.DeserializeAsync<WarCounterTick>(await request.Content.ReadAsStreamAsync());
             var warId = new WarId($"{counterTick.SourceUser}_{counterTick.TargetUser}");
 
-            await client.SignalEntityAsync(new EntityId(nameof(WarCounter), warId), "Tick",
-                counterTick.AmountTaken);
+            await client.SignalEntityAsync<ICounter>(new EntityId(nameof(WarCounter), warId),
+                counter => counter.Tick(counterTick.AmountTaken));
+        }
+
+        [FunctionName("GetWarCounter")]
+        public async Task<int> GetWarCounter([DurableClient] IDurableEntityClient client,
+            [HttpTrigger(AuthorizationLevel.Function, "get", "/warcounter/{warId}")]
+            string warId)
+        {
+            var id = new WarId(warId);
+            var counter = await client.ReadEntityStateAsync<WarCounter>(new EntityId(nameof(WarCounter), id));
+
+            return !counter.EntityExists ? Int32.MinValue : counter.EntityState.PointsFromThreshold;
         }
 
         // ReSharper disable once ClassNeverInstantiated.Local

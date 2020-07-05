@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Durable.Entity
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class WarCounter
+    public class WarCounter : ICounter
     {
         [JsonProperty("sourcePlayer")]
         public string SourceUser { get; set; }
@@ -24,9 +24,16 @@ namespace Durable.Entity
 
         public void Reset() => TotalPointsTaken = 0;
 
+        public int PointsFromThreshold => WarThreshold - TotalPointsTaken;
+
         [FunctionName(nameof(WarCounter))]
         public static Task Run([EntityTrigger] IDurableEntityContext context) =>
             context.DispatchAsync<WarCounter>();
+    }
+
+    public interface ICounter
+    {
+        void Tick(int amount);
     }
 
     [JsonObject(MemberSerialization.OptIn)]
