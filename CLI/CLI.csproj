@@ -29,8 +29,4 @@
     </None>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(TargetDir)\pcli.exe postbuild $(ConfigurationName)" />
-  </Target>
-
 </Project>
