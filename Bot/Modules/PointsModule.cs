@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Bot.Services;
 using Discord;
 using Discord.Commands;
-using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Configuration;
 using PointsBot.Infrastructure.Commands;
 using PointsBot.Infrastructure.Models;

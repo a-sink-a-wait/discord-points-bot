@@ -8,6 +8,7 @@ using Durable.Entity;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using PointsBot.Infrastructure.Models;
 
 namespace Durable
 {
@@ -56,23 +57,6 @@ namespace Durable
                 counter => counter.Reset());
             
             return new HttpResponseMessage(HttpStatusCode.Accepted);
-        }
-
-        // ReSharper disable once ClassNeverInstantiated.Local
-        // Request model
-        private class WarCounterTick
-        {
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            // Request model
-            public string SourceUser { get; set; }
-
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            // Request model
-            public string TargetUser { get; set; }
-
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            // Request model
-            public int AmountTaken { get; set; }
         }
     }
 }

@@ -29,7 +29,11 @@ namespace PointsBot.CLI
                 return 0;
             }
 
-            var sender = new CommandSender(new QueueClient(new ServiceBusConnectionStringBuilder(Configuration["CommandServiceBusConnectionString"])));
+            var sender = new CommandSender(
+                new QueueClient(
+                    new ServiceBusConnectionStringBuilder(Configuration["CommandServiceBusConnectionString"])),
+                new TopicClient(
+                    new ServiceBusConnectionStringBuilder(Configuration["ExtensionsServiceBusConnectionString"])));
 
             switch (command)
             {

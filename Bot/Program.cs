@@ -38,6 +38,8 @@ namespace Bot
                         .AddSingleton<IQueueClient>(provider =>
                             new QueueClient(provider.GetService<IConfiguration>()["ServiceBusConnectionString"], "commands"))
                         .AddSingleton<CommandSender>()
+                        .AddSingleton<ITopicClient>(provider => 
+                            new TopicClient(provider.GetService<IConfiguration>()["ServiceBusConnectionString"], "extensions"))
                         .AddHttpClient()
                         .AddSingleton<PointsService>();
                 })

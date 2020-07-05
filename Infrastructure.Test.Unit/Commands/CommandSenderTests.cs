@@ -12,10 +12,11 @@ namespace Infrastructure.Test.Unit.Commands
         [TestMethod]
         public async Task SendAdd_CallsSendAsync_WithMessage()
         {
+            var mockTopicClient = new Mock<ITopicClient>();
             var mockQueueClient = new Mock<IQueueClient>();
             mockQueueClient.Setup(queue => queue.SendAsync(It.IsAny<Message>()));
 
-            var structureUnderTest = new CommandSender(mockQueueClient.Object);
+            var structureUnderTest = new CommandSender(mockQueueClient.Object, mockTopicClient.Object);
             await structureUnderTest.SendAdd("somePlayerId", "someTarget", 0, "Test");
 
             mockQueueClient.Verify(client => client.SendAsync(It.IsAny<Message>()));
@@ -24,13 +25,28 @@ namespace Infrastructure.Test.Unit.Commands
         [TestMethod]
         public async Task SendRemove_CallsSendAsync_WithMessage()
         {
+            var mockTopicClient = new Mock<ITopicClient>();
             var mockQueueClient = new Mock<IQueueClient>();
             mockQueueClient.Setup(queue => queue.SendAsync(It.IsAny<Message>()));
 
-            var structureUnderTest = new CommandSender(mockQueueClient.Object);
+            var structureUnderTest = new CommandSender(mockQueueClient.Object, mockTopicClient.Object);
             await structureUnderTest.SendRemove("somePlayerId", "someTarget", 0, "Test");
 
             mockQueueClient.Verify(client => client.SendAsync(It.IsAny<Message>()));
+        }
+
+        [TestMethod]
+        public async Task SendRemove_CallsSendToSubscription_WithMessageToWarCounter()
+        {
+            var mockTopicClient = new Mock<ITopicClient>();
+            var mockQueueClient = new Mock<IQueueClient>();
+
+            mockTopicClient.Setup(topicClient => topicClient.SendAsync(It.Is<Message>(message => message.To == "WarCounter")));
+
+            var structureUnderTest = new CommandSender(mockQueueClient.Object, mockTopicClient.Object);
+            await structureUnderTest.SendRemove("somePlayerId", "someTarget", 0, "Test");
+
+            mockTopicClient.Verify(client => client.SendAsync(It.Is<Message>(message => message.To == "WarCounter")));
         }
     }
 }
