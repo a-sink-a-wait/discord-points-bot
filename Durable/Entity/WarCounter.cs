@@ -24,6 +24,7 @@ namespace Durable.Entity
 
         public void Reset() => TotalPointsTaken = 0;
 
+        [JsonProperty("pointsFromThreshold")]
         public int PointsFromThreshold => WarThreshold - TotalPointsTaken;
 
         [FunctionName(nameof(WarCounter))]
@@ -34,6 +35,8 @@ namespace Durable.Entity
     public interface ICounter
     {
         void Tick(int amount);
+
+        void Reset();
     }
 
     [JsonObject(MemberSerialization.OptIn)]

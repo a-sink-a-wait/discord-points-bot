@@ -9,20 +9,42 @@ namespace Function.Test.Unit.Durable
         [TestMethod]
         public void WarId_IsValid_AsString()
         {
-            string warIdA = new WarId("playerA_playerB");
-            string warIdB = new WarId("playerB_playerA");
-
-            string warIdSwapped = ((WarId) warIdA).Swapped();
-
-            Assert.AreNotEqual(warIdA, warIdB);
-            Assert.AreEqual(warIdB, warIdSwapped);
+            WarId.TryParse("playerA_playerB", out string warIdA);
+            WarId.TryParse("playerB_playerA", out string warIdB);
 
             WarId typedWarIdA = warIdA;
             WarId typedWarIdB = warIdB;
-            WarId typedWarIdSwapped = warIdSwapped;
 
+            Assert.AreNotEqual(warIdA, warIdB);
             Assert.IsTrue(typedWarIdA.EqualsId(typedWarIdB));
-            Assert.IsTrue(typedWarIdA.EqualsId(typedWarIdSwapped));
+        }
+
+        [TestMethod]
+        public void WarId_TryParseReturnsTrue_WhenWarIdIsNotValid()
+        {
+            const char Separator = '_';
+            const string PlayerA = "PlayerA";
+            const string PlayerB = "PlayerB";
+
+            var warId = $"{PlayerA}{Separator}{PlayerB}";
+            var didParse = WarId.TryParse(warId, out var result);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(didParse); 
+        }
+
+        [TestMethod]
+        public void WarId_TryParseReturnsFalse_WhenWarIdIsNotValid()
+        {
+            const char Separator = ';';
+            const string PlayerA = "PlayerA";
+            const string PlayerB = "PlayerB";
+
+            var warId = $"{PlayerA}{Separator}{PlayerB}";
+            var didParse = WarId.TryParse(warId, out var result);
+
+            Assert.IsNull(result);
+            Assert.IsFalse(didParse);
         }
     }
 }
