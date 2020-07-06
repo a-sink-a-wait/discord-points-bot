@@ -39,7 +39,7 @@ namespace Bot
                             new QueueClient(provider.GetService<IConfiguration>()["ServiceBusConnectionString"], "commands"))
                         .AddSingleton<CommandSender>()
                         .AddSingleton<ITopicClient>(provider => 
-                            new TopicClient(provider.GetService<IConfiguration>()["ServiceBusConnectionString"], "extensions"))
+                            new TopicClient(provider.GetService<IConfiguration>()["ServiceBusTopicConnectionString"], "extensions"))
                         .AddHttpClient()
                         .AddSingleton<PointsService>();
                 })
