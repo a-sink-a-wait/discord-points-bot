@@ -17,8 +17,6 @@ namespace Function
 {
     public class Startup : FunctionsStartup
     {
-        private const string CosmosDatabaseName = "points_bot";
-
         private static readonly CosmosClientOptions CosmosClientOptions = new CosmosClientOptions
         {
             ApplicationName = "PBot"
@@ -39,9 +37,9 @@ namespace Function
             builder.Services.AddSingleton<Func<string, Container>>(serviceProvider =>
             {
                 var client = serviceProvider.GetService<CosmosClient>();
-                return (containerName) =>
+                return containerName =>
                 {
-                    var database = client.GetDatabase(CosmosDatabaseName);
+                    var database = client.GetDatabase(configuration["CosmosDatabaseName"]);
                     return database.GetContainer(containerName);
                 };
             });
