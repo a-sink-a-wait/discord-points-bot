@@ -25,7 +25,7 @@ namespace Function.Query
         public async Task<PlayerState> GetPlayerPoints(
             [Table("points")] CloudTable pointsTable,
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "points/{source}/{playerId}")]
-            HttpRequest _, string playerId, string source)
+            HttpRequest r, string playerId, string source)
         {
             var queryAction = TableOperation.Retrieve<PlayerPoints>(source, playerId);
             var queryResult = await pointsTable.ExecuteAsync(queryAction);
@@ -44,7 +44,7 @@ namespace Function.Query
         [FunctionName("GetTimeout")]
         public Task<bool> GetPlayerTimeout(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "timeout/{source}/{playerId}")]
-            HttpRequest _, string playerId, string source)
+            HttpRequest r, string playerId, string source)
         {
             return _gameTimer.HasTimeout(playerId, source);
         }
