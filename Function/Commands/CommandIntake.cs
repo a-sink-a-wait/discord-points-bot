@@ -49,7 +49,7 @@ namespace Function.Commands
 
         [FunctionName("ChangeFeedProcessor")]
         public async Task ProcessChangeFeed(
-            [CosmosDBTrigger("points_bot", "points_events_monitored", CreateLeaseCollectionIfNotExists = true, ConnectionStringSetting = "CosmosConnectionString")]
+            [CosmosDBTrigger("%CosmosDatabaseName%", "%EventFeed:ContainerName%", CreateLeaseCollectionIfNotExists = true, ConnectionStringSetting = "CosmosConnectionString")]
             IReadOnlyList<Document> changes)
         {
             if (changes.Count <= 0) return;
