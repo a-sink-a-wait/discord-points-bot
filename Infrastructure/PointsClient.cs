@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 using PointsBot.Core;
+using PointsBot.Core.Configuration;
 
 namespace PointsBot.Infrastructure
 {

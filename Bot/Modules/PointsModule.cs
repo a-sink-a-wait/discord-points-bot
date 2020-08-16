@@ -41,7 +41,7 @@ namespace Bot.Modules
             if (await _pointsService.IsPlayerTimedOut(Context.User.Username, Source(Context.Guild.Id)))
             {
                 await Context.User.SendMessageAsync(
-                    "You're doing that too much. You can only add or remove points once an hour. I should probably tell you that because TECHNICALLY I know exactly when you're going to timeout. However my creator has neglected to see value in such a thing until just this moment...huh.......weird.");
+                    "You're doing that too much. You can only add or remove points once an hour. I should probably tell you how much time is left because TECHNICALLY I know exactly when you're going to timeout, but I won't'");
                 return;
             }
 

@@ -11,6 +11,8 @@ namespace PointsBot.Infrastructure.Commands
         private readonly IQueueClient _client;
         private readonly ITopicClient _topicClient;
 
+        private const string WarCounterSubscription = "WarCounter";
+
         public CommandSender(IQueueClient client, ITopicClient topicClient)
         {
             _client = client;
@@ -34,7 +36,7 @@ namespace PointsBot.Infrastructure.Commands
             var commandAndWar = new[]
             {
                 SendCommand(new RemoveCommand(originPlayerId, targetPlayerId, amountOfPoints, source)),
-                SendToSubscription("WarCounter", warCounterTick)
+                SendToSubscription(WarCounterSubscription, warCounterTick)
             };
 
             return Task.WhenAll(commandAndWar);

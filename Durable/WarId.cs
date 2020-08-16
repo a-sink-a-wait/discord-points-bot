@@ -32,7 +32,7 @@ namespace Durable
                    String.Equals(Swapped(), other, StringComparison.OrdinalIgnoreCase);
         }
 
-        private WarId Swapped() => $"{this._splitId[1]}_{this._splitId[0]}";
+        private WarId Swapped() => $"{_splitId[1]}_{_splitId[0]}";
 
         public static implicit operator string(WarId id) => id._warId;
 

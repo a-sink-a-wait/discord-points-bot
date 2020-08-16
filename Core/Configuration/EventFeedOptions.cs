@@ -1,11 +1,9 @@
-﻿namespace PointsBot.Core
+﻿namespace PointsBot.Core.Configuration
 {
-    public class TimeoutOptions
+    public class EventFeedOptions
     {
         public string DatabaseName { get; set; }
 
         public string ContainerName { get; set; }
-
-        public int InSeconds { get; set; }
     }
 }

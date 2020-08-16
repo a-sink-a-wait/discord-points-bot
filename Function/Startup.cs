@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using PointsBot.Core;
+using PointsBot.Core.Configuration;
 using PointsBot.Infrastructure;
 
 namespace Function
