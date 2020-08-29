@@ -25,4 +25,27 @@ namespace Bot.Services
             return Boolean.Parse(timedOut);
         }
     }
+
+    public class WarService
+    {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+
+        public WarService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        {
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+        }
+
+        public async Task<int> GetPointsFromThreshold(string sourcePlayer, string targetPlayer)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            var url = $"{_configuration["WarBaseEndpoint"]}GetWarCounter?code={_configuration["WarQuery"]}";
+
+            var result = await httpClient.GetAsync(url);
+            var content = await result.Content.ReadAsStringAsync();
+
+            return Int32.Parse(content);
+        }
+    }
 }

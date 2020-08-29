@@ -18,6 +18,7 @@ namespace Bot.Modules
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly PointsService _pointsService;
+        private readonly WarService _warService;
 
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
@@ -26,12 +27,13 @@ namespace Bot.Modules
 
         private static string Source(ulong guildId) => $"discord_{guildId}";
 
-        public PointsModule(CommandSender sender, IHttpClientFactory httpClientFactory, IConfiguration configuration, PointsService pointsService)
+        public PointsModule(CommandSender sender, IHttpClientFactory httpClientFactory, IConfiguration configuration, PointsService pointsService, WarService warService)
         {
             _sender = sender;
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _pointsService = pointsService;
+            _warService = warService;
         }
 
         private static bool PlayerTargetingSelf(IUser source, IUser target) => source.Username.Equals(target.Username, StringComparison.InvariantCultureIgnoreCase);
@@ -54,11 +56,23 @@ namespace Bot.Modules
             await Task.WhenAll(commandsToSend());
         }
 
-        private IEnumerable<Task> RemovePoints(IUser user, int amountOfPoints) => new[]
+        private async Task<IEnumerable<Task>> RemovePoints(IUser user, int amountOfPoints)
         {
-            _sender.SendRemove(Context.User.Username, user.Username, amountOfPoints, Source(Context.Guild.Id)),
-            Context.Channel.SendMessageAsync("Transaction complete.")
-        };
+            var pointsFromThreshold = await _warService.GetPointsFromThreshold(Context.User.Username, user.Username);
+            if (pointsFromThreshold - amountOfPoints <= 0)
+            {
+                // Prompt for war
+                return new [] { Task.CompletedTask };
+            }
+
+            var removeTasks = new[]
+            {
+                _sender.SendRemove(Context.User.Username, user.Username, amountOfPoints, Source(Context.Guild.Id)),
+                Context.Channel.SendMessageAsync("Transaction complete.")
+            };
+
+            return removeTasks;
+        }
 
         private IEnumerable<Task> AddPoints(IUser user, int amountOfPoints) => new[]
         {

@@ -41,7 +41,8 @@ namespace Bot
                         .AddSingleton<ITopicClient>(provider => 
                             new TopicClient(provider.GetService<IConfiguration>()["ServiceBusTopicConnectionString"], "extensions"))
                         .AddHttpClient()
-                        .AddSingleton<PointsService>();
+                        .AddSingleton<PointsService>()
+                        .AddSingleton<WarService>();
                 })
                 .Build();
 
