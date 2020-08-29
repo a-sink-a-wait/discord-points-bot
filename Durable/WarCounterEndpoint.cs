@@ -19,8 +19,8 @@ namespace Durable
             [HttpTrigger(AuthorizationLevel.Function, "post", "/warcounter/tick")] HttpRequestMessage request)
         {
             var counterTick = await JsonSerializer.DeserializeAsync<WarCounterTick>(await request.Content.ReadAsStreamAsync());
-            if (!WarId.TryParse($"{counterTick.SourceUser}_{counterTick.TargetUser}", out var warId))
-                return new HttpResponseMessage(HttpStatusCode.BadRequest) {ReasonPhrase = $"Invalid warId: {warId}"};
+            if (!WarId.TryParse($"{counterTick.SourceUser}:{counterTick.TargetUser}", out var warId))
+                return new HttpResponseMessage(HttpStatusCode.BadRequest) { ReasonPhrase = $"Invalid warId: {warId}" };
 
             await client.SignalEntityAsync<ICounter>(new EntityId(nameof(WarCounter), warId),
                 counter => counter.Tick(counterTick.AmountTaken));

@@ -21,7 +21,7 @@ namespace Durable
             [ServiceBusTrigger(TopicName, SubscriptionName, Connection = "ExtensionsConnectionString")]string message)
         {
             var counterTick = JsonSerializer.Deserialize<WarCounterTick>(message);
-            if (!WarId.TryParse($"{counterTick.SourceUser}_{counterTick.TargetUser}", out var warId))
+            if (!WarId.TryParse($"{counterTick.SourceUser}:{counterTick.TargetUser}", out var warId))
                 throw new InvalidDataException($"Invalid warId: {warId}");
 
             return client.SignalEntityAsync<ICounter>(new EntityId(nameof(WarCounter), warId),

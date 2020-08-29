@@ -9,8 +9,8 @@ namespace Function.Test.Unit.Durable
         [TestMethod]
         public void WarId_IsValid_AsString()
         {
-            WarId.TryParse("playerA_playerB", out string warIdA);
-            WarId.TryParse("playerB_playerA", out string warIdB);
+            WarId.TryParse("playerA:playerB", out var warIdA);
+            WarId.TryParse("playerB:playerA", out var warIdB);
 
             WarId typedWarIdA = warIdA;
             WarId typedWarIdB = warIdB;
@@ -22,7 +22,7 @@ namespace Function.Test.Unit.Durable
         [TestMethod]
         public void WarId_TryParseReturnsTrue_WhenWarIdIsNotValid()
         {
-            const char Separator = '_';
+            const char Separator = ':';
             const string PlayerA = "PlayerA";
             const string PlayerB = "PlayerB";
 

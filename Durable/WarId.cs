@@ -5,18 +5,20 @@ namespace Durable
 {
     public class WarId
     {
+        private const string Delimiter = ":";
+
         private readonly string _warId;
         private readonly string[] _splitId;
-
+        
         private WarId(string warId)
         {
-            _splitId = warId.Split("_");
+            _splitId = warId.Split(Delimiter);
             _warId = warId;
         }
 
         public static bool TryParse(string warId, out string id)
         {
-            if (warId.Split("_").Length != 2)
+            if (warId.Split(Delimiter).Length != 2)
             {
                 id = null;
                 return false;
@@ -32,13 +34,13 @@ namespace Durable
                    String.Equals(Swapped(), other, StringComparison.OrdinalIgnoreCase);
         }
 
-        private WarId Swapped() => $"{_splitId[1]}_{_splitId[0]}";
+        private WarId Swapped() => $"{_splitId[1]}{Delimiter}{_splitId[0]}";
 
         public static implicit operator string(WarId id) => id._warId;
 
         public static implicit operator string[](WarId id) => id._splitId;
 
-        public static implicit operator WarId(string[] warId) => new WarId(String.Join('_', warId));
+        public static implicit operator WarId(string[] warId) => new WarId(String.Join(Delimiter, warId));
 
         public static implicit operator WarId(string warId) => new WarId(warId);
     }
