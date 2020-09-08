@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
@@ -36,24 +37,31 @@ namespace Bot.Services
 
         public async Task MessageReceivedAsync(SocketMessage rawMessage)
         {
-            // Ignore system messages, or messages from other bots
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            // This value holds the offset where the prefix ends
+            if (_discord.GetUser(message.Author.Id) is SocketGuildUser guildUser)
+            {
+                var hasNobodyLikesMeRole = guildUser.Roles.Any(role => role.Name == "Nobody Likes Me");
+                if (hasNobodyLikesMeRole)
+                {
+                    var nobodyLikesMeTasks = new[]
+                    {
+                        message.DeleteAsync(new RequestOptions {AuditLogReason = "Automated from PBot"}),
+                        message.Author.SendMessageAsync("Go away.")
+                    };
+
+                    await Task.WhenAll(nobodyLikesMeTasks);
+
+                    return;
+                }
+            }
+
             var argPos = 0;
-            // Perform prefix check. You may want to replace this with
-            // (!message.HasCharPrefix('!', ref argPos))
-            // for a more traditional command format like !help.
             if (!message.HasMentionPrefix(_discord.CurrentUser, ref argPos)) return;
 
             var context = new SocketCommandContext(_discord, message);
-            // Perform the execution of the command. In this method,
-            // the command service will perform precondition and parsing check
-            // then execute the command if one is matched.
-            await _commands.ExecuteAsync(context, argPos, _services); 
-            // Note that normally a result will be returned by this format, but here
-            // we will handle the result in CommandExecutedAsync,
+            await _commands.ExecuteAsync(context, argPos, _services);
         }
 
         public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
