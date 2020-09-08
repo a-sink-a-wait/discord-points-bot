@@ -15,6 +15,7 @@ namespace Bot.Services
         private readonly DiscordSocketClient _discord;
         private readonly IServiceProvider _services;
 
+        private const ulong PotatoId = 309042360246075403;
         public CommandHandlingService(IServiceProvider services)
         {
             _commands = services.GetRequiredService<CommandService>();
@@ -40,7 +41,10 @@ namespace Bot.Services
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            if (_discord.GetUser(message.Author.Id) is SocketGuildUser guildUser)
+            var guild = _discord.GetGuild(PotatoId);
+            var guildUser = guild.GetUser(message.Author.Id);
+
+            if (guildUser != null)
             {
                 var hasNobodyLikesMeRole = guildUser.Roles.Any(role => role.Name == "Nobody Likes Me");
                 if (hasNobodyLikesMeRole)
