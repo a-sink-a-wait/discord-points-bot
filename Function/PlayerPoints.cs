@@ -4,8 +4,6 @@ namespace Function
 {
     public class PlayerPoints : TableEntity
     {
-        public static PlayerPoints None = new PlayerPoints();
-
         public string Source => this.PartitionKey;
 
         public string PlayerName => this.RowKey;
